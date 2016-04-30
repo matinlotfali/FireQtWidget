@@ -13,7 +13,8 @@
 GLWidget::GLWidget()
 {    
     setAutoFillBackground(false);
-    setMouseTracking(true);
+    setMouseTracking(true);    
+    setCursor(Qt::BlankCursor);
     resize(_size,_size);
 
     random = new Random(85533);
@@ -56,34 +57,34 @@ void GLWidget::paintEvent(QPaintEvent *)
         sum += fpsList.at(i);
     unsigned long fps = sum/fpsList.size();
 
+   painter->drawEllipse(cursorX,cursorY,20,20);
+
    unsigned int w = image->width();
    unsigned int h = image->height();
 
    unsigned char *pixels = image->bits();
-   unsigned int j, index, x;
+   unsigned int index;
    unsigned char r,g,b;
 
-   for(i=0; i<h-1; i++)
-       for(j=0; j<w - _gher + 1; j++)
-       {
-           index = ((i+1)*w + j)*4;
-           r = pixels[index+2];
-           g = pixels[index+1];
-           b = pixels[index];
+   for (unsigned int i = _wind; i < w * (h - 1) - _gher + 1; i++)
+   {
+       index = (i+w)*4;
+       r = pixels[index+2];
+       g = pixels[index+1];
+       b = pixels[index];
 
-           if(random->nextInt(100) < _flame)
-               NextColor(&r,&g,&b);
-           x = j + random->nextInt(_gher) - _wind;
+       if(random->nextInt(100) < _flame)
+           NextColor(&r,&g,&b);
 
-           index = (i*w+x)*4;
-           pixels[index+2] = r;
-           pixels[index+1] = g;
-           pixels[index] = b;
-       }
+       index = (i+random->nextInt(_gher) - _wind)*4;
+       pixels[index+2] = r;
+       pixels[index+1] = g;
+       pixels[index] = b;
+    }
 
     QPainter p(this);
     p.setPen(QPen(Qt::white));
-    p.drawImage(rect(),*image);
+    p.drawImage(rect(),*image);    
     p.drawText(5,5,width(),height(),00,"FPS: "+ QString::number(fps));
 }
 
@@ -130,26 +131,22 @@ void GLWidget::resizeEvent(QResizeEvent *)
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    int x,y;
+{    
     if(this->width() < _size && this->height() < _size)
     {
-        x = event->pos().x();
-        y = event->pos().y();
+        cursorX = event->pos().x();
+        cursorY = event->pos().y();
     }
     else if(this->width() > this->height())
     {
-        x = event->pos().x() * _size / this->width();
-        y = event->pos().y() * _size / this->width();
+        cursorX = event->pos().x() * _size / this->width();
+        cursorY = event->pos().y() * _size / this->width();
     }
     else
     {
-        x = event->pos().x() * _size / this->height();
-        y = event->pos().y() * _size / this->height();
+        cursorX = event->pos().x() * _size / this->height();
+        cursorY = event->pos().y() * _size / this->height();
     }
-    //qDebug()<< QString("Mouse move (%1,%2)").arg(x).arg(y);
-
-    painter->drawEllipse(x,y,20,20);
-    update();
+    //qDebug()<< QString("Mouse move (%1,%2)").arg(x).arg(y);        
 }
 

@@ -23,6 +23,7 @@ private:
     QPainter *painter = NULL;
     Random *random;
     vector<int> fpsList;
+    int cursorX, cursorY;
     void resizeEvent(QResizeEvent *);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *);
