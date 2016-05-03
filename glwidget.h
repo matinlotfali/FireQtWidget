@@ -1,7 +1,7 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include <QOpenGLWidget>
+#include "QWidget"
 #include <QPainter>
 #include "QTime"
 #include "QTimer"
