@@ -12,9 +12,7 @@ void MyThread::run()
     for(;;)
     {        
         if(ui->painter)
-        {
-            ui->painter->drawEllipse(ui->cursorX,ui->cursorY,20,20);
-
+        {            
             unsigned int w = ui->image->width();
             unsigned int h = ui->image->height();
 
@@ -37,6 +35,14 @@ void MyThread::run()
                pixels[index+2] = r;
                pixels[index+1] = g;
                pixels[index] = b;
+            }
+
+            for(int i=0; i<ui->cursorX.count(); i++)
+                ui->painter->drawEllipse(ui->cursorX[i],ui->cursorY[i],20,20);
+            for(int i=0; i<ui->cursorX.count()-1; i++)
+            {
+                ui->cursorX.removeFirst();
+                ui->cursorY.removeFirst();
             }
         }
 

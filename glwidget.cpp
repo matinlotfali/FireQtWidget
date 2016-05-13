@@ -84,18 +84,18 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {    
     if(this->width() < _size && this->height() < _size)
     {
-        cursorX = event->pos().x();
-        cursorY = event->pos().y();
+        cursorX.append(event->pos().x());
+        cursorY.append(event->pos().y());
     }
     else if(this->width() > this->height())
     {
-        cursorX = event->pos().x() * _size / this->width();
-        cursorY = event->pos().y() * _size / this->width();
+        cursorX.append(event->pos().x() * _size / this->width());
+        cursorY.append(event->pos().y() * _size / this->width());
     }
     else
     {
-        cursorX = event->pos().x() * _size / this->height();
-        cursorY = event->pos().y() * _size / this->height();
+        cursorX.append(event->pos().x() * _size / this->height());
+        cursorY.append(event->pos().y() * _size / this->height());
     }
     //qDebug()<< QString("Mouse move (%1,%2)").arg(x).arg(y);        
 }

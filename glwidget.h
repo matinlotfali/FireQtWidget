@@ -8,6 +8,7 @@
 #include "random.h"
 #include "stdlib.h"
 #include "thread.h"
+#include "QList"
 
 #define _gher 3
 #define _wind 0
@@ -22,7 +23,7 @@ public:
     QImage *image = NULL;
     QPainter *painter = NULL;
     Random *random;    
-    int cursorX, cursorY;    
+    QList<int> cursorX, cursorY;
     int framesShown = 0;
 
 private:            
