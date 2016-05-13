@@ -1,14 +1,9 @@
 #include "glwidget.h"
 #include "QDebug"
 #include "QMouseEvent"
-#include "QThread"
+#include "thread"
 #include "QTime"
 #include "QGraphicsBlurEffect"
-
-#define _gher 3
-#define _wind 0
-#define _flame 15
-#define _size 400
 
 GLWidget::GLWidget()
 {    
@@ -17,75 +12,30 @@ GLWidget::GLWidget()
     setCursor(Qt::BlankCursor);
     resize(_size,_size);
 
-    random = new Random(85533);
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(0);
-    t.start();
+    random = new Random(85533);    
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(Tick()));
+    timer->start(1000);
+
+    MyThread *thread = new MyThread(this,this);
+    connect(thread, SIGNAL(ShowOnUI()),this,SLOT(update()));
+    thread->start();    
 }
 
-void GLWidget::NextColor(unsigned char *r,unsigned char *g, unsigned char *b)
+void GLWidget::Tick()
 {
-    if (*r == 255 && *g > 0 && *b == 0)
-    {
-        if (*g >= _flame)
-            *g = *g - _flame;
-        else
-            *g = 0;
-    }
-    else if (*r > 0 && *g == 0 && *b == 0)
-    {
-        if (*r >= _flame)
-            *r = *r - _flame;
-        else
-            *r = 0;
-    }
+    setWindowTitle("Fire - FPS: "+ QString::number(framesShown));
+    framesShown = 0;
 }
 
 void GLWidget::paintEvent(QPaintEvent *)
-{    
-    unsigned int i;
-    int difference = t.elapsed();
-    if(difference == 0)
-        difference = 1;
-    t.start();
-    fpsList.push_back(1000/difference);
-    if(fpsList.size() > 500)
-        fpsList.erase(fpsList.begin());
-    unsigned long sum = 0;
-    for (i=0; i<fpsList.size(); i++)
-        sum += fpsList.at(i);
-    unsigned long fps = sum/fpsList.size();
-
-   painter->drawEllipse(cursorX,cursorY,20,20);
-
-   unsigned int w = image->width();
-   unsigned int h = image->height();
-
-   unsigned char *pixels = image->bits();
-   unsigned int index;
-   unsigned char r,g,b;
-
-   for (unsigned int i = _wind; i < w * (h - 1) - _gher + 1; i++)
-   {
-       index = (i+w)*4;
-       r = pixels[index+2];
-       g = pixels[index+1];
-       b = pixels[index];
-
-       if(random->nextInt(100) < _flame)
-           NextColor(&r,&g,&b);
-
-       index = (i+random->nextInt(_gher) - _wind)*4;
-       pixels[index+2] = r;
-       pixels[index+1] = g;
-       pixels[index] = b;
-    }
+{
+    framesShown++;
 
     QPainter p(this);
     p.setPen(QPen(Qt::white));
-    p.drawImage(rect(),*image);    
-    p.drawText(5,5,width(),height(),00,"FPS: "+ QString::number(fps));
+    p.drawImage(rect(),*image);        
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *)
