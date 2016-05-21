@@ -2,8 +2,7 @@
 #define THREAD_H
 
 #include <QThread>
-
-class GLWidget;
+#include "glwidget.h"
 
 class MyThread: public QThread
 {

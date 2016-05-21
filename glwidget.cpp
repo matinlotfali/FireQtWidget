@@ -1,7 +1,7 @@
 #include "glwidget.h"
 #include "QDebug"
 #include "QMouseEvent"
-#include "thread"
+#include "thread.h"
 #include "QTime"
 #include "QGraphicsBlurEffect"
 
@@ -18,9 +18,16 @@ GLWidget::GLWidget()
     connect(timer, SIGNAL(timeout()), this, SLOT(Tick()));
     timer->start(1000);
 
-    MyThread *thread = new MyThread(this,this);
+    thread = new MyThread(this,this);
     connect(thread, SIGNAL(ShowOnUI()),this,SLOT(update()));
     thread->start();    
+}
+
+GLWidget::~GLWidget()
+{
+    thread->terminate();
+    thread->wait();
+    delete thread;
 }
 
 void GLWidget::Tick()
@@ -33,8 +40,7 @@ void GLWidget::paintEvent(QPaintEvent *)
 {
     framesShown++;
 
-    QPainter p(this);
-    p.setPen(QPen(Qt::white));
+    QPainter p(this);    
     p.drawImage(rect(),*image);        
 }
 

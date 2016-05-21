@@ -4,12 +4,21 @@
 
 class Random
 {
-private:
     unsigned int g_seed;
 public:
-    Random(unsigned int seed);
-    unsigned int nextInt();
-    unsigned int nextInt(unsigned int max);
+    inline Random(const unsigned int seed)
+        :g_seed(seed) { }
+
+    inline unsigned int nextInt()
+    {
+        g_seed = (214013*g_seed+2531011);
+        return (g_seed>>16)&0x7FFF;
+    }
+
+    inline unsigned int nextInt(const unsigned int max)
+    {
+        return nextInt() % max;
+    }
 };
 
 #endif // RANDOM_H

@@ -1,5 +1,4 @@
 #include "thread.h"
-#include "glwidget.h"
 
 MyThread::MyThread(GLWidget *widget,QObject * parent):
     QThread(parent)
@@ -52,18 +51,24 @@ void MyThread::run()
 
 inline void MyThread::NextColor(unsigned char *r,unsigned char *g, unsigned char *b)
 {
-    if (*r == 255 && *g > 0 && *b == 0)
+    if(*b == 0)
     {
-        if (*g >= _flame)
-            *g = *g - _flame;
-        else
-            *g = 0;
-    }
-    else if (*r > 0 && *g == 0 && *b == 0)
-    {
-        if (*r >= _flame)
-            *r = *r - _flame;
-        else
-            *r = 0;
+        if (*r == 255 && *g > 0)
+        {
+            if(*g > 0)
+            {
+                if (*g >= _flame)
+                    *g = *g - _flame;
+                else
+                    *g = 0;
+            }
+        }
+        else if (*r > 0 && *g == 0)
+        {
+            if (*r >= _flame)
+                *r = *r - _flame;
+            else
+                *r = 0;
+        }
     }
 }
